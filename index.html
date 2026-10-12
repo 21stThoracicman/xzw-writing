@@ -727,7 +727,9 @@ function composeXzw(){
     const h = String(s.head||'').trim();
     if(h){ groups.push({ head:h, texts:[t] }); return; }
     const last = groups[groups.length-1];
-    if(last && !last.head && SEQ_RE.test(t.trim())) last.texts.push(t);
+    /* 与上一段合并的条件：上一段没有小标题，或者上一段本身就是 First/Second/Finally 的续写 */
+    const joinable = last && (last.head==='' || SEQ_RE.test((last.texts[0]||'').trim()));
+    if(joinable && SEQ_RE.test(t.trim())) last.texts.push(t);
     else groups.push({ head:'', texts:[t] });
   });
   groups.forEach(g=> out.push(g.head ? (g.head+'\n'+g.texts.join(' ')) : g.texts.join(' ')));
